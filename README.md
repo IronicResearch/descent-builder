@@ -25,3 +25,33 @@ stereo page-flipping support in their hardware display controllers, since they e
 engineers who previously worked for SGI. Other startup vendors like nVidia opted to support
 stereo above/below format, though was not as successful getting acceptance. 
  
+**Descent 1.x**
+
+The original Descent game by Parallax Software was distributed by Interplay Productions who
+made OEM versions of their games bundled with various graphics board vendors. This included
+various stereoscopic eyewear vendors too like StereoGraphics. While the retail version of Descent 
+would work with any VGA graphics boards, special OEM bundled versions were ported to S3,
+Rendition, and 3DFX graphics accelerator chipsets.
+
+Stereo display support had already been implemented by others, but with inferior stereo viewing
+effects. StereoGraphics consultant Bob Akka fixed the stereo viewing support with the preferred
+parallel-projection method, and enlisted me to assist with VGA graphics mode support. Another
+stereo page-flip driver called LCDBIOS had been developed independently by Don Sawdai and
+included on retail releases. OEM versions of Descent used external library functions for stereo 
+page-flipping support, like SVRDOS32 for S3 Virge, or hardware page-flip registers for Rendition Verite.
+
+Someone from Parallax Software posted the Descent 1.5 source with stereo support options
+intact with external LCDBIOS driver. I re-added support for SVRDOS32 library as an additional
+stereo support option `—simuleyes` alternative to LCDBIOS. The SVRDOS32 library uses
+the LCDBIOS interrupt handlers internally, though additionally allows support for VESA
+graphics modes instead of VGA, including SciTech UniVBE VESA BIOS extensions for
+linear framebuffer modes and refresh rate control.
+
+Descent 1.5 legacy only runs on DOS/4GW hosts so gets built with Watcom C compiler.
+A batch file `maked1.bat` is used for building instead of the buggy makefile.
+
+```
+cd descent
+maked1
+```
+
