@@ -1,3 +1,6 @@
 [submodule "descent"]
 	path = descent
 	url = https://github.com/IronicResearch/descent.git
+[submodule "dxx-rebirth"]
+	path = dxx-rebirth
+	url = https://github.com/IronicResearch/dxx-rebirth.git
