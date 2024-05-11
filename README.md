@@ -113,3 +113,44 @@ export CXXFLAGS=-DDXX_USE_STEREOSCOPIC_RENDER=1
 scons -j4 d1x=1 d2x=1 use_stereo_render=1
 ```
 
+**Mesa GL Support**
+
+Building Mesa is fairly straightforward by following the instructions.
+Needed to add library package dependencies to complete `meson` configuration.
+Compiler is LLVM and needed v11.
+
+```
+apt install meson
+apt install llvm-11
+apt install libelf-dev
+apt install wayland wayland-protocols waylandpp-dev
+apt install libwayland-egl libwayland-egl1-mesa libwayland-egl-backend
+apt install xcb libxcb-glx0-dev
+```
+
+Needed to fixup symlinks to llvm-11 default, since llvm-10 had been installed previously.
+
+```
+./fixup-llvm-11.sh
+llvm-config —version
+```
+
+```
+cd mesa
+mkdir build
+cd build
+meson
+sudo ninja install
+ls -ltr /usr/local/lib
+ls -ltr /usr/local/lib/x86_64-linux-gnu
+ls -ltr /usr/local/lib/x86_64-linux-gnu/dri
+```
+
+Recompiled Mesa libraries will have been deployed to /usr/local/lib, so overide LD_LIBRARY_PATH when launching GL apps.
+DRI drivers for Radeon graphics chipsets are in /dri subdirectory.
+
+```
+export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu/
+glxinfo | grep OpenGL
+```
+
