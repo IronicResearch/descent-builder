@@ -1,0 +1,3 @@
+[submodule "descent"]
+	path = descent
+	url = https://github.com/IronicResearch/descent.git
