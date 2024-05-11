@@ -55,3 +55,61 @@ cd descent
 maked1
 ```
 
+**Descent Rebirth**
+
+The Descent Rebirth project ‘dxx-rebirth’ has upgraded the Descent1 & Descent 2 sources
+to use C++ extensively for code re-organization and OpenGL for rendering output.
+
+This looked like a great place to re-port the stereo display support from Descent 1.5 source,
+and use GL_STEREO quad-buffering for stereo rendering on capable graphics boards like Radeon.
+This option is limited to select stereo-capable hardware and only gets exposed through the
+Mesa / GL stack when a stereo-capable visual gets selected via glxChooseVisual(). Such
+stereo conditionals are enabled via command line option `-gl_stereo`.
+
+```
+./d1x-rebirth/d1x-rebirth -gl_stereo
+```
+
+Adding stereo viewport formats for above/below sync-doubler and side/by/side HMDs was not
+that much extra effort for initial submission. The stereo viewport options were selected by a
+separate command line option `-gl_stereoview <n>`, where ’n’ selects the above/below or
+side/by/side viewport format enumerations.
+
+```
+./d2x-rebirth/d2x-rebirth -gl_stereoview 4
+```
+
+However since the original Descent legacy code was setup to switch video modes between 
+game play mode vs menu mode or automap mode, the stereo viewport format modes were not
+immediately accessible outside of normal game play mode without mangling menus or automaps.
+So additional code modifications were submitted just to support stereo viewports with popup
+menus and automaps for consistant viewing experience. This additional code is a bit messier and
+reminiscent for similar challenges for UI support on graphics workstations which only supported
+above/below stereo format.
+
+When building on MacBook Pro for Catalina:
+Needed g++10, Python 3.9, scons 4.1, SDL 2.x.
+
+```
+brew install scons
+brew install sdl2 sdl2_image sdl2_mixer physfs
+brew bundle
+..
+cd dxx-rebirth
+export CXXFLAGS=-Wno-uninitialized
+scons macos_add_frameworks=false sconf_cxx20=1
+```
+
+When building on Linux Ubuntu 20.04:
+Needed g++10.5, Python 3.8.10, scons 3.1.2
+
+```
+apt install g++10 python3 scons
+apt install libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libphysfs-dev
+..
+cd dxx-rebirth
+export CXX=g++10
+export CXXFLAGS=-DDXX_USE_STEREOSCOPIC_RENDER=1
+scons -j4 d1x=1 d2x=1 use_stereo_render=1
+```
+
