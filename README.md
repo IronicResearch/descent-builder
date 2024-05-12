@@ -14,7 +14,7 @@ workstations.
 
 StereoGraphics also offered an inexpensive pair of eyewear which depended on alternating left/right
 display fields in page-flipping mode. Game apps hosted on MS-DOS at the time used VGA graphics
-boards which featured “mode X” for accessing all 4 pages of 64KB video memory. This special VGA
+boards which featured “mode X” for accessing all 4 planes of 64KB video memory. This special VGA
 video memory configuration allowed support for quad-buffered stereoscopic page-flipping modes, 
 as supported via OpenGL on higher-end SGI graphics workstations. 
 
@@ -88,7 +88,7 @@ reminiscent for similar challenges for UI support on graphics workstations which
 above/below stereo format.
 
 When building on MacBook Pro for Catalina:
-Needed g++10, Python 3.9, scons 4.1, SDL 2.x.
+Needed g++10, Python 3.11, scons 4.5, SDL 2.x.
 
 ```
 brew install scons
@@ -97,7 +97,7 @@ brew bundle
 ..
 cd dxx-rebirth
 export CXXFLAGS=-Wno-uninitialized
-scons macos_add_frameworks=false sconf_cxx20=1
+scons -j8 macos_add_frameworks=false sdl2=true sconf_cxx20=1 use_stereo_render=1
 ```
 
 When building on Linux Ubuntu 20.04:
