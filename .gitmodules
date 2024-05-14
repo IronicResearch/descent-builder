@@ -5,3 +5,7 @@
 	path = dxx-rebirth
 	url = https://github.com/IronicResearch/dxx-rebirth.git
 	branch = main
+[submodule "mesa"]
+	path = mesa
+	url = https://github.com/IronicResearch/mesa-dev.git
+	branch = 21.3-dev
