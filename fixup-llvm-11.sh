@@ -1,0 +1,51 @@
+#!/usr/bin/env sh
+
+sudo update-alternatives --install \
+        /usr/bin/llvm-config       llvm-config      /usr/bin/llvm-config-11  200 \
+--slave /usr/bin/llvm-ar           llvm-ar          /usr/bin/llvm-ar-11 \
+--slave /usr/bin/llvm-as           llvm-as          /usr/bin/llvm-as-11 \
+--slave /usr/bin/llvm-bcanalyzer   llvm-bcanalyzer  /usr/bin/llvm-bcanalyzer-11 \
+--slave /usr/bin/llvm-cat          llvm-cat         /usr/bin/llvm-cat-11 \
+--slave /usr/bin/llvm-cfi-verify   llvm-cfi-verify  /usr/bin/llvm-cfi-verify-11 \
+--slave /usr/bin/llvm-cov          llvm-cov         /usr/bin/llvm-cov-11 \
+--slave /usr/bin/llvm-c-test       llvm-c-test      /usr/bin/llvm-c-test-11 \
+--slave /usr/bin/llvm-cvtres       llvm-cvtres      /usr/bin/llvm-cvtres-11 \
+--slave /usr/bin/llvm-cxxdump      llvm-cxxdump     /usr/bin/llvm-cxxdump-11 \
+--slave /usr/bin/llvm-cxxfilt      llvm-cxxfilt     /usr/bin/llvm-cxxfilt-11 \
+--slave /usr/bin/llvm-diff         llvm-diff        /usr/bin/llvm-diff-11 \
+--slave /usr/bin/llvm-dis          llvm-dis         /usr/bin/llvm-dis-11 \
+--slave /usr/bin/llvm-dlltool      llvm-dlltool     /usr/bin/llvm-dlltool-11 \
+--slave /usr/bin/llvm-dwarfdump    llvm-dwarfdump   /usr/bin/llvm-dwarfdump-11 \
+--slave /usr/bin/llvm-dwp          llvm-dwp         /usr/bin/llvm-dwp-11 \
+--slave /usr/bin/llvm-exegesis     llvm-exegesis    /usr/bin/llvm-exegesis-11 \
+--slave /usr/bin/llvm-extract      llvm-extract     /usr/bin/llvm-extract-11 \
+--slave /usr/bin/llvm-lib          llvm-lib         /usr/bin/llvm-lib-11 \
+--slave /usr/bin/llvm-link         llvm-link        /usr/bin/llvm-link-11 \
+--slave /usr/bin/llvm-lto          llvm-lto         /usr/bin/llvm-lto-11 \
+--slave /usr/bin/llvm-lto2         llvm-lto2        /usr/bin/llvm-lto2-11 \
+--slave /usr/bin/llvm-mc           llvm-mc          /usr/bin/llvm-mc-11 \
+--slave /usr/bin/llvm-mca          llvm-mca         /usr/bin/llvm-mca-11 \
+--slave /usr/bin/llvm-modextract   llvm-modextract  /usr/bin/llvm-modextract-11 \
+--slave /usr/bin/llvm-mt           llvm-mt          /usr/bin/llvm-mt-11 \
+--slave /usr/bin/llvm-nm           llvm-nm          /usr/bin/llvm-nm-11 \
+--slave /usr/bin/llvm-objcopy      llvm-objcopy     /usr/bin/llvm-objcopy-11 \
+--slave /usr/bin/llvm-objdump      llvm-objdump     /usr/bin/llvm-objdump-11 \
+--slave /usr/bin/llvm-opt-report   llvm-opt-report  /usr/bin/llvm-opt-report-11 \
+--slave /usr/bin/llvm-pdbutil      llvm-pdbutil     /usr/bin/llvm-pdbutil-11 \
+--slave /usr/bin/llvm-PerfectShuffle llvm-PerfectShuffle /usr/bin/llvm-PerfectShuffle-11 \
+--slave /usr/bin/llvm-profdata     llvm-profdata    /usr/bin/llvm-profdata-11 \
+--slave /usr/bin/llvm-ranlib       llvm-ranlib      /usr/bin/llvm-ranlib-11 \
+--slave /usr/bin/llvm-rc           llvm-rc          /usr/bin/llvm-rc-11 \
+--slave /usr/bin/llvm-readelf      llvm-readelf     /usr/bin/llvm-readelf-11 \
+--slave /usr/bin/llvm-readobj      llvm-readobj     /usr/bin/llvm-readobj-11 \
+--slave /usr/bin/llvm-rtdyld       llvm-rtdyld      /usr/bin/llvm-rtdyld-11 \
+--slave /usr/bin/llvm-size         llvm-size        /usr/bin/llvm-size-11 \
+--slave /usr/bin/llvm-split        llvm-split       /usr/bin/llvm-split-11 \
+--slave /usr/bin/llvm-stress       llvm-stress      /usr/bin/llvm-stress-11 \
+--slave /usr/bin/llvm-strings      llvm-strings     /usr/bin/llvm-strings-11 \
+--slave /usr/bin/llvm-strip        llvm-strip       /usr/bin/llvm-strip-11 \
+--slave /usr/bin/llvm-symbolizer   llvm-symbolizer  /usr/bin/llvm-symbolizer-11 \
+--slave /usr/bin/llvm-tblgen       llvm-tblgen      /usr/bin/llvm-tblgen-11 \
+--slave /usr/bin/llvm-undname      llvm-undname     /usr/bin/llvm-undname-11 \
+--slave /usr/bin/llvm-xray         llvm-xray        /usr/bin/llvm-xray-11
+
