@@ -140,15 +140,18 @@ cd mesa
 mkdir build
 cd build
 meson
+ninja
 sudo ninja install
-ls -ltr /usr/local/lib
-ls -ltr /usr/local/lib/x86_64-linux-gnu
-ls -ltr /usr/local/lib/x86_64-linux-gnu/dri
 ```
 
 Recompiled Mesa libraries will have been deployed to /usr/local/lib, so overide LD_LIBRARY_PATH when launching GL apps.
 DRI drivers for Radeon graphics chipsets are in /dri subdirectory.
 
+```
+ls -ltr /usr/local/lib
+ls -ltr /usr/local/lib/x86_64-linux-gnu
+ls -ltr /usr/local/lib/x86_64-linux-gnu/dri
+```
 ```
 export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu/
 glxinfo | grep OpenGL
