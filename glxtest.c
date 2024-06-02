@@ -19,8 +19,9 @@ int make_glx_context(void)
 	};
 	XVisualInfo *vis;
 	GLXContext ctx;
-	GLboolean stereo;
+	GLboolean stereo, db;
 	Window win;
+	const GLubyte* str;
 
 	dpy = XOpenDisplay(NULL);
 	if (dpy == NULL) {
@@ -50,6 +51,12 @@ int make_glx_context(void)
 
 	glGetBooleanv(GL_STEREO, &stereo);
 	printf("GL_STEREO support = %d\n", (int)stereo);
+	glGetBooleanv(GL_DOUBLEBUFFER, &db);
+	printf("GL_DOUBLEBUFFER   = %d\n", (int)db);
+	str = glGetString(GL_VERSION);
+	printf("GL_VERSION        = %s\n", str);
+	str = glGetString(GL_RENDERER);
+	printf("GL_RENDERER       = %s\n", str);
 
 	glXMakeCurrent(dpy, None, NULL);
 	glXDestroyContext(dpy, ctx);
