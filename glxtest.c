@@ -58,6 +58,21 @@ int make_glx_context(void)
 	str = glGetString(GL_RENDERER);
 	printf("GL_RENDERER       = %s\n", str);
 
+	if (stereo) {
+		glDrawBuffer(GL_BACK_LEFT);
+		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDrawBuffer(GL_BACK_RIGHT);
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glXSwapBuffers(dpy, win);
+	} else {
+		glDrawBuffer(GL_BACK);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glXSwapBuffers(dpy, win);
+	}
+
 	glXMakeCurrent(dpy, None, NULL);
 	glXDestroyContext(dpy, ctx);
 	XDestroyWindow(dpy, win);
