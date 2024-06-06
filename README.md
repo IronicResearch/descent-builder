@@ -157,3 +157,15 @@ export LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu/
 glxinfo | grep OpenGL
 ```
 
+Mesa driver infrastructure still supports legacy GL stereo quad buffer
+selections, although later code defers to more common double buffering
+and back buffer blitting options, ignoring stereo-enabled visuals
+altogether. Added `MESA_GLX_FORCE_STEREO` environment variable to
+forcibly enable GLX_STEREO visuals with GLX_DOUBLEBUFFER visuals
+to allow stereo quad buffering capability to be available.
+
+```
+export MESA_GLX_FORCE_STEREO=1
+glxgears -stereo
+```
+
