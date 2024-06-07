@@ -169,3 +169,28 @@ export MESA_GLX_FORCE_STEREO=1
 glxgears -stereo
 ```
 
+**GLUT Stereo support**
+
+The GLUT Stereo demos are useful to double check GL stereo quad buffering support on the
+Mesa GL/GLX driver stack. Since GLUT is a wrapper library for GLX functions on X11 systems,
+support for GLX_STEREO visuals will be exposed via GLUT_STEREO option.
+
+The GLUT Stereo demos are already configured for fullscreen stereo modes via the
+`STEREO` and `FULLSCREEN` compilation conditionals. It is additionally useful to
+enable stereo signalling via the `STEREO_UTILITY` conditional which will trigger
+stereo sync on a Sync Doubler Emitter with left/right blue-line registration markers.
+
+```
+apt install freeglut
+..
+cd StereoDemos
+export CFLAGS="-DSTEREO_UTILITY"
+make
+./gears
+```
+
+The GLUT fullscreen mode is preset to 640x480 at highest available refresh rate.
+On Ubuntu 20.04, exiting the fullscreen GLUT demos does not appear to restore the
+previous desktop resolution, so must be manually restored via the Display control
+panel settings. Apparently 640x480 is not listed as a valid desktop mode, so the
+next available desktop resolution is 800x600 at highest refresh rate 85 Hz.
