@@ -17,6 +17,8 @@ int make_drm_context(void)
 	drmModeRes* 		resources = NULL;
 	drmModeConnector* 	connector = NULL;
 	drmModeModeInfo*	modeinfo = NULL;
+	drmModeEncoder*		encoder = NULL;
+	drmModeCrtc*		crtc = NULL;
 
 	fd = open("/dev/dri/card0", O_RDWR);
 	if (fd < 0) {
@@ -49,7 +51,27 @@ int make_drm_context(void)
 			modeinfo->vrefresh);
 	}
 
+	encoder = drmModeGetEncoder(fd, connector->encoder_id);
+	if (encoder == NULL) {
+		r = errno;
+		printf("no encoder for DRM fd %d, error = %d\n", fd, r);
+		goto x3;
+	}
 
+	crtc = drmModeGetCrtc(fd, encoder->crtc_id);
+	if (crtc == NULL) {
+		r = errno;
+		printf("no crtc for DRM fd %d, error = %d\n", fd, r);
+		goto x4;
+	}
+
+	printf("CRTC ID %d: %d,%d %dx%d\n", crtc->crtc_id, crtc->x, crtc->y, crtc->width, crtc->height);
+	printf("CRTC mode: %dx%d @%d\n", crtc->mode.hdisplay, crtc->mode.vdisplay, crtc->mode.vrefresh);
+
+	drmModeFreeCrtc(crtc);
+x4:
+	drmModeFreeEncoder(encoder);
+x3:
 	drmModeFreeConnector(connector);
 x2:
 	drmModeFreeResources(resources);
