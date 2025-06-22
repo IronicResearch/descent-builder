@@ -7,6 +7,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
@@ -19,6 +22,9 @@ int make_drm_context(void)
 	drmModeModeInfo*	modeinfo = NULL;
 	drmModeEncoder*		encoder = NULL;
 	drmModeCrtc*		crtc = NULL;
+	drmModeModeInfo 	reqmode = { .hdisplay = 640, .vdisplay = 480, .vrefresh = 85 };
+	void* fbmem = NULL;
+	uint32_t fbbuf_id = 0;
 
 	fd = open("/dev/dri/card0", O_RDWR);
 	if (fd < 0) {
@@ -49,6 +55,10 @@ int make_drm_context(void)
 			modeinfo->hdisplay, 
 			modeinfo->vdisplay,
 			modeinfo->vrefresh);
+		if (modeinfo->hdisplay == reqmode.hdisplay
+			&& modeinfo->vdisplay == reqmode.vdisplay
+			&& modeinfo->vrefresh >= reqmode.vrefresh)
+				reqmode = *modeinfo;
 	}
 
 	encoder = drmModeGetEncoder(fd, connector->encoder_id);
@@ -68,6 +78,60 @@ int make_drm_context(void)
 	printf("CRTC ID %d: %d,%d %dx%d\n", crtc->crtc_id, crtc->x, crtc->y, crtc->width, crtc->height);
 	printf("CRTC mode: %dx%d @%d\n", crtc->mode.hdisplay, crtc->mode.vdisplay, crtc->mode.vrefresh);
 
+	// create dumb framebuffer via low-level API
+	struct drm_mode_create_dumb request = { .width = 640, .height = 480, .bpp = 32 };
+	r = ioctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &request);
+	if (r != 0) {
+		printf("no framebuffer creation for DRM fd %d, error = %d\n", fd, r);
+		goto x5;
+	}
+
+	// request framebuffer offset for mmap() mapping
+	struct drm_mode_map_dumb req_map = { .handle = request.handle };
+	r = ioctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &req_map);
+	if (r != 0) {
+		printf("no framebuffer mapping for DRM fd %d, error = %d\n", fd, r);
+		goto x5;
+	}
+
+	// memory-map framebuffer for userspace access
+	fbmem = mmap(NULL, request.size, PROT_READ | PROT_WRITE, MAP_SHARED, 
+		fd, req_map.offset);
+	if (fbmem == NULL) {
+		r = errno;
+		printf("no framebuffer mapping for DRM fd %d, error = %d\n", fd, r);
+		goto x6;
+	}
+
+	// fill framebuffer with test pattern
+	memset(fbmem, 0x55, request.size);
+
+	// add framebuffer for CRTC mode setting
+	r = drmModeAddFB(fd, request.width, request.height, 24,
+			request.bpp, request.pitch, request.handle, &fbbuf_id);
+	if (r != 0) {
+		printf("no framebuffer binding for DRM fd %d, error = %d\n", fd, r);
+		goto x7;
+	}
+
+	// switch to framebuffer test mode setting
+	drmModeSetCrtc(fd, crtc->crtc_id, fbbuf_id, 0, 0,
+		&connector->connector_id, 1, &reqmode);
+
+	printf("CRTC mode: %dx%d @%d\n", reqmode.hdisplay, reqmode.vdisplay, reqmode.vrefresh);
+	sleep(10);
+
+	// restore original CRTC mode
+	drmModeSetCrtc(fd, crtc->crtc_id, crtc->buffer_id, crtc->x, crtc->y, 
+		&connector->connector_id, 1, &crtc->mode);
+
+	// destroy framebuffer binding + mapping
+	drmModeRmFB(fd, fbbuf_id);
+x7:
+	munmap(fbmem, request.size);
+x6:
+	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &req_map);
+x5:
 	drmModeFreeCrtc(crtc);
 x4:
 	drmModeFreeEncoder(encoder);
