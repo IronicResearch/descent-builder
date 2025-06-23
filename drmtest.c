@@ -23,8 +23,10 @@ int make_drm_context(void)
 	drmModeEncoder*		encoder = NULL;
 	drmModeCrtc*		crtc = NULL;
 	drmModeModeInfo 	reqmode = { .hdisplay = 800, .vdisplay = 600, .vrefresh = 85 };
-	void* fbmem = NULL;
-	uint32_t fbbuf_id = 0;
+	void* fbmem[2] = { NULL, NULL };
+	uint32_t fbbuf_id[2] = { 0, 0 };
+	uint32_t fbhandle[2] = { 0, 0 };
+	uint64_t fboffset[2] = { 0, 0 };
 
 	fd = open("/dev/dri/card0", O_RDWR);
 	if (fd < 0) {
@@ -81,48 +83,64 @@ int make_drm_context(void)
 	// create dumb framebuffer via low-level API
 	struct drm_mode_create_dumb request = { .width = 800, .height = 600, .bpp = 32 };
 	r = ioctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &request);
+	fbhandle[0] = request.handle;
+	r |= ioctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &request);
+	fbhandle[1] = request.handle;
 	if (r != 0) {
 		printf("no framebuffer creation for DRM fd %d, error = %d\n", fd, r);
 		goto x5;
 	}
 
 	// request framebuffer offset for mmap() mapping
-	struct drm_mode_map_dumb req_map = { .handle = request.handle };
+	struct drm_mode_map_dumb req_map = { .handle = fbhandle[0] };
 	r = ioctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &req_map);
+	fboffset[0] = req_map.offset;
+	req_map.handle = fbhandle[1];
+	r |= ioctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &req_map);
+	fboffset[1] = req_map.offset;
 	if (r != 0) {
 		printf("no framebuffer mapping for DRM fd %d, error = %d\n", fd, r);
 		goto x5;
 	}
 
 	// memory-map framebuffer for userspace access
-	fbmem = mmap(NULL, request.size, PROT_READ | PROT_WRITE, MAP_SHARED, 
-		fd, req_map.offset);
-	if (fbmem == NULL) {
+	fbmem[0] = mmap(NULL, request.size, PROT_READ | PROT_WRITE, MAP_SHARED, 
+		fd, fboffset[0]);
+	fbmem[1] = mmap(NULL, request.size, PROT_READ | PROT_WRITE, MAP_SHARED, 
+		fd, fboffset[1]);
+	if (fbmem[0] == NULL || fbmem[1] == NULL) {
 		r = errno;
 		printf("no framebuffer mapping for DRM fd %d, error = %d\n", fd, r);
 		goto x6;
 	}
 
 	// fill framebuffer with test pattern
-	memset(fbmem, 0x55, request.size);
+	memset(fbmem[0], 0x55, request.size);
+	memset(fbmem[1], 0xAA, request.size);
 
 	// add framebuffer for CRTC mode setting
 	r = drmModeAddFB(fd, request.width, request.height, 24,
-			request.bpp, request.pitch, request.handle, &fbbuf_id);
+			request.bpp, request.pitch, fbhandle[0], &fbbuf_id[0]);
+	r |= drmModeAddFB(fd, request.width, request.height, 24,
+			request.bpp, request.pitch, fbhandle[1], &fbbuf_id[1]);
 	if (r != 0) {
 		printf("no framebuffer binding for DRM fd %d, error = %d\n", fd, r);
 		goto x7;
 	}
 
 	// switch to framebuffer test mode setting
-	drmModeSetCrtc(fd, crtc->crtc_id, fbbuf_id, 0, 0,
+	drmModeSetCrtc(fd, crtc->crtc_id, fbbuf_id[0], 0, 0,
 		&connector->connector_id, 1, &reqmode);
 
 	printf("CRTC mode: %dx%d @%d\n", reqmode.hdisplay, reqmode.vdisplay, reqmode.vrefresh);
 	sleep(10);
 
 	// page flip framebuffer test
-	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id, DRM_MODE_PAGE_FLIP_ASYNC, NULL);
+	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[0], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
+	printf("DRM PageFlip returned = %d\n", r);
+	sleep(10);
+
+	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[1], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
 	printf("DRM PageFlip returned = %d\n", r);
 	sleep(10);
 
@@ -131,10 +149,14 @@ int make_drm_context(void)
 		&connector->connector_id, 1, &crtc->mode);
 
 	// destroy framebuffer binding + mapping
-	drmModeRmFB(fd, fbbuf_id);
+	drmModeRmFB(fd, fbbuf_id[1]);
+	drmModeRmFB(fd, fbbuf_id[0]);
 x7:
-	munmap(fbmem, request.size);
+	munmap(fbmem[1], request.size);
+	munmap(fbmem[0], request.size);
 x6:
+	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &req_map);
+	req_map.handle = fbhandle[0];
 	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &req_map);
 x5:
 	drmModeFreeCrtc(crtc);
