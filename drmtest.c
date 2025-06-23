@@ -138,24 +138,25 @@ int make_drm_context(void)
 	printf("CRTC mode: %dx%d @%d\n", reqmode.hdisplay, reqmode.vdisplay, reqmode.vrefresh);
 
 	// page flip framebuffer test
-	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[0], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
+	uint32_t userdata = 0xdeadbeef;
+	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[0], DRM_MODE_PAGE_FLIP_EVENT, &userdata);
 	printf("DRM PageFlip returned = %d\n", r);
 	sleep(10);
 
-	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[1], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
+	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[1], DRM_MODE_PAGE_FLIP_EVENT, &userdata);
 	printf("DRM PageFlip returned = %d\n", r);
 	sleep(10);
 
 	// page flip stereo extension for radeon driver
 	r = drmModePageFlipTarget(fd, crtc->crtc_id, fbbuf_id[0], 
-		DRM_MODE_PAGE_FLIP_ASYNC | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
-		NULL, fboffset[1] - fboffset[0]);
+		DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
+		&userdata, fboffset[1] - fboffset[0]);
 	printf("DRM PageFlipTarget returned = %d\n", r);
 	sleep(10);
 
 	r = drmModePageFlipTarget(fd, crtc->crtc_id, fbbuf_id[0], 
-		DRM_MODE_PAGE_FLIP_ASYNC | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
-		NULL, 0);
+		DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
+		&userdata, 0);
 	printf("DRM PageFlipTarget returned = %d\n", r);
 
 	// restore original CRTC mode
