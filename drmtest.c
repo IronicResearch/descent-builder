@@ -22,7 +22,7 @@ int make_drm_context(void)
 	drmModeModeInfo*	modeinfo = NULL;
 	drmModeEncoder*		encoder = NULL;
 	drmModeCrtc*		crtc = NULL;
-	drmModeModeInfo 	reqmode = { .hdisplay = 640, .vdisplay = 480, .vrefresh = 85 };
+	drmModeModeInfo 	reqmode = { .hdisplay = 800, .vdisplay = 600, .vrefresh = 85 };
 	void* fbmem = NULL;
 	uint32_t fbbuf_id = 0;
 
@@ -79,7 +79,7 @@ int make_drm_context(void)
 	printf("CRTC mode: %dx%d @%d\n", crtc->mode.hdisplay, crtc->mode.vdisplay, crtc->mode.vrefresh);
 
 	// create dumb framebuffer via low-level API
-	struct drm_mode_create_dumb request = { .width = 640, .height = 480, .bpp = 32 };
+	struct drm_mode_create_dumb request = { .width = 800, .height = 600, .bpp = 32 };
 	r = ioctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &request);
 	if (r != 0) {
 		printf("no framebuffer creation for DRM fd %d, error = %d\n", fd, r);
@@ -119,6 +119,11 @@ int make_drm_context(void)
 		&connector->connector_id, 1, &reqmode);
 
 	printf("CRTC mode: %dx%d @%d\n", reqmode.hdisplay, reqmode.vdisplay, reqmode.vrefresh);
+	sleep(10);
+
+	// page flip framebuffer test
+	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id, DRM_MODE_PAGE_FLIP_ASYNC, NULL);
+	printf("DRM PageFlip returned = %d\n", r);
 	sleep(10);
 
 	// restore original CRTC mode
