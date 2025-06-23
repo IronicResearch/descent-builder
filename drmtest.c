@@ -13,6 +13,10 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
+#ifndef DRM_MODE_PAGE_FLIP_TARGET_STEREO
+#define DRM_MODE_PAGE_FLIP_TARGET_STEREO  (DRM_MODE_PAGE_FLIP_TARGET_RELATIVE << 1)
+#endif
+
 int make_drm_context(void)
 {
 	int r = 0;
@@ -143,6 +147,18 @@ int make_drm_context(void)
 	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[1], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
 	printf("DRM PageFlip returned = %d\n", r);
 	sleep(10);
+
+	// page flip stereo extension for radeon driver
+	r = drmModePageFlipTarget(fd, crtc->crtc_id, fbbuf_id[0], 
+		DRM_MODE_PAGE_FLIP_ASYNC | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
+		NULL, fboffset[1] - fboffset[0]);
+	printf("DRM PageFlipTarget returned = %d\n", r);
+	sleep(10);
+
+	r = drmModePageFlipTarget(fd, crtc->crtc_id, fbbuf_id[0], 
+		DRM_MODE_PAGE_FLIP_ASYNC | DRM_MODE_PAGE_FLIP_TARGET_STEREO, 
+		NULL, 0);
+	printf("DRM PageFlipTarget returned = %d\n", r);
 
 	// restore original CRTC mode
 	drmModeSetCrtc(fd, crtc->crtc_id, crtc->buffer_id, crtc->x, crtc->y, 
