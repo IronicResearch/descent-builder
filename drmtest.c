@@ -135,9 +135,7 @@ int make_drm_context(void)
 	// switch to framebuffer test mode setting
 	drmModeSetCrtc(fd, crtc->crtc_id, fbbuf_id[0], 0, 0,
 		&connector->connector_id, 1, &reqmode);
-
 	printf("CRTC mode: %dx%d @%d\n", reqmode.hdisplay, reqmode.vdisplay, reqmode.vrefresh);
-	sleep(10);
 
 	// page flip framebuffer test
 	r = drmModePageFlip(fd, crtc->crtc_id, fbbuf_id[0], DRM_MODE_PAGE_FLIP_ASYNC, NULL);
@@ -171,9 +169,8 @@ x7:
 	munmap(fbmem[1], request.size);
 	munmap(fbmem[0], request.size);
 x6:
-	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &req_map);
-	req_map.handle = fbhandle[0];
-	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &req_map);
+	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &fbhandle[1]);
+	ioctl(fd, DRM_IOCTL_MODE_DESTROY_DUMB, &fbhandle[0]);
 x5:
 	drmModeFreeCrtc(crtc);
 x4:
