@@ -12,3 +12,7 @@
 [submodule "StereoDemos"]
 	path = StereoDemos
 	url = https://github.com/IronicResearch/StereoDemos.git
+[submodule "linux-kernel-5.4"]
+	path = linux-kernel-5.4
+	url = https://github.com/IronicResearch/linux-kernel-5.4.git
+	branch = linux-5.4.y-dev
