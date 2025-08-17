@@ -53,6 +53,7 @@ A batch file `maked1.bat` is used for building instead of the buggy makefile.
 ```
 cd descent
 maked1
+descentr -simuleyes
 ```
 
 **Descent Rebirth**
@@ -168,6 +169,22 @@ to allow stereo quad buffering capability to be available.
 export MESA_GLX_FORCE_STEREO=1
 glxgears -stereo
 ```
+
+After finessing the list of supported visual formats to add GLX_STEREO 
+capability independently of GLX_DOUBLEBUFFER when enumerated by `glxinfo`
+or `glxtest`, the hack for forcing both types on together is still
+needed for Descent `dxx-rebirth` since GLX setup is handled externally
+by SDL library layer. So `MESA_GLX_FORCE_STEREO` supports more than one 
+value for compatibility with `glxgears` or `dxx-rebirth`.
+
+```
+export MESA_GLX_FORCE_STEREO=2
+dxx-rebirth -gl_stereo
+```
+
+The Mesa library driver stack was modified for DRI legacy drivers on original
+Intel, Radeon, and nVidia chipsets, as well as newer Gallium driver framework
+for all later PCI Express boards.
 
 **GLUT Stereo support**
 
