@@ -8,7 +8,7 @@
 [submodule "mesa"]
 	path = mesa
 	url = https://github.com/IronicResearch/mesa-dev.git
-	branch = 21.3-dev
+	branch = 22.3-dev
 [submodule "StereoDemos"]
 	path = StereoDemos
 	url = https://github.com/IronicResearch/StereoDemos.git
