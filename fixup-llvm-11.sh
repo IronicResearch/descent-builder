@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
 sudo update-alternatives --install \
-        /usr/bin/llvm-config       llvm-config      /usr/bin/llvm-config-11  200 \
+        /usr/bin/llvm-config       llvm-config      /usr/bin/llvm-config-11  411 \
+--slave /usr/bin/llvm-addr2line    llvm-addr2line   /usr/bin/llvm-addr2line-11 \
 --slave /usr/bin/llvm-ar           llvm-ar          /usr/bin/llvm-ar-11 \
 --slave /usr/bin/llvm-as           llvm-as          /usr/bin/llvm-as-11 \
 --slave /usr/bin/llvm-bcanalyzer   llvm-bcanalyzer  /usr/bin/llvm-bcanalyzer-11 \
@@ -12,19 +13,27 @@ sudo update-alternatives --install \
 --slave /usr/bin/llvm-cvtres       llvm-cvtres      /usr/bin/llvm-cvtres-11 \
 --slave /usr/bin/llvm-cxxdump      llvm-cxxdump     /usr/bin/llvm-cxxdump-11 \
 --slave /usr/bin/llvm-cxxfilt      llvm-cxxfilt     /usr/bin/llvm-cxxfilt-11 \
+--slave /usr/bin/llvm-cxxmap       llvm-cxxmap      /usr/bin/llvm-cxxmap-11 \
 --slave /usr/bin/llvm-diff         llvm-diff        /usr/bin/llvm-diff-11 \
 --slave /usr/bin/llvm-dis          llvm-dis         /usr/bin/llvm-dis-11 \
 --slave /usr/bin/llvm-dlltool      llvm-dlltool     /usr/bin/llvm-dlltool-11 \
 --slave /usr/bin/llvm-dwarfdump    llvm-dwarfdump   /usr/bin/llvm-dwarfdump-11 \
 --slave /usr/bin/llvm-dwp          llvm-dwp         /usr/bin/llvm-dwp-11 \
+--slave /usr/bin/llvm-elfabi       llvm-elfabi      /usr/bin/llvm-elfabi-11 \
 --slave /usr/bin/llvm-exegesis     llvm-exegesis    /usr/bin/llvm-exegesis-11 \
 --slave /usr/bin/llvm-extract      llvm-extract     /usr/bin/llvm-extract-11 \
+--slave /usr/bin/llvm-gsymutil     llvm-gsymutil    /usr/bin/llvm-gsymutil-11 \
+--slave /usr/bin/llvm-ifs          llvm-ifs         /usr/bin/llvm-ifs-11 \
+--slave /usr/bin/llvm-install-name-tool llvm-install-name-tool /usr/bin/llvm-install-name-tool-11 \
+--slave /usr/bin/llvm-jitlink      llvm-jitlink     /usr/bin/llvm-jitlink-11 \
 --slave /usr/bin/llvm-lib          llvm-lib         /usr/bin/llvm-lib-11 \
 --slave /usr/bin/llvm-link         llvm-link        /usr/bin/llvm-link-11 \
+--slave /usr/bin/llvm-lipo         llvm-lipo        /usr/bin/llvm-lipo-11 \
 --slave /usr/bin/llvm-lto          llvm-lto         /usr/bin/llvm-lto-11 \
 --slave /usr/bin/llvm-lto2         llvm-lto2        /usr/bin/llvm-lto2-11 \
 --slave /usr/bin/llvm-mc           llvm-mc          /usr/bin/llvm-mc-11 \
 --slave /usr/bin/llvm-mca          llvm-mca         /usr/bin/llvm-mca-11 \
+--slave /usr/bin/llvm-ml           llvm-ml          /usr/bin/llvm-ml-11 \
 --slave /usr/bin/llvm-modextract   llvm-modextract  /usr/bin/llvm-modextract-11 \
 --slave /usr/bin/llvm-mt           llvm-mt          /usr/bin/llvm-mt-11 \
 --slave /usr/bin/llvm-nm           llvm-nm          /usr/bin/llvm-nm-11 \
@@ -38,6 +47,7 @@ sudo update-alternatives --install \
 --slave /usr/bin/llvm-rc           llvm-rc          /usr/bin/llvm-rc-11 \
 --slave /usr/bin/llvm-readelf      llvm-readelf     /usr/bin/llvm-readelf-11 \
 --slave /usr/bin/llvm-readobj      llvm-readobj     /usr/bin/llvm-readobj-11 \
+--slave /usr/bin/llvm-reduce       llvm-reduce      /usr/bin/llvm-reduce-11 \
 --slave /usr/bin/llvm-rtdyld       llvm-rtdyld      /usr/bin/llvm-rtdyld-11 \
 --slave /usr/bin/llvm-size         llvm-size        /usr/bin/llvm-size-11 \
 --slave /usr/bin/llvm-split        llvm-split       /usr/bin/llvm-split-11 \
