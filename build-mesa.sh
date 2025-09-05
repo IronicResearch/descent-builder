@@ -10,11 +10,7 @@ cd mesa
 if [ ! -d build ]
 then
 	mkdir build
-	cd build
-	meson
-else
-	cd build
-	ninja
-	sudo ninja install
+	meson setup build
 fi
-
+ninja -C build
+sudo ninja -C build install
